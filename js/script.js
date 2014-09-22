@@ -3,13 +3,14 @@
 		/* Ajax download phpmyadmin */
 		var data_phpmyadmin = {
 			action: 'dbmngr_phpmyadmin',
+			dbmngr_ajax_nonce_field : db_manager_js_var.dbmngr_nonce
 		};
 		$( '#dbmngr_download_ajax_pma' ).click( function() {
-			dbmngr_download_ajax_pma( pma );
+			dbmngr_download_ajax_pma( db_manager_js_var.pma );
 			return false;
 		} );
 		$( '#dbmngr_update_ajax_pma' ).click( function() {
-			dbmngr_download_ajax_pma( pma_update );
+			dbmngr_download_ajax_pma( db_manager_js_var.pma_update );
 			return false;
 		} );
 		function dbmngr_download_ajax_pma( pma_message ) {
@@ -29,7 +30,7 @@
 						$( '#dbmngr_download_ajax_pma' ).remove();
 					} else {
 						$( '.error' ).css( 'display', 'block' );
-						$( '.error p strong' ).text( pma_error );
+						$( '.error p strong' ).text( db_manager_js_var.pma_error );
 						$( '#dbmngr-submit-loader-pma' ).fadeOut();
 						$( '#dbmngr_download_ajax_pma' ).remove();
 					}
@@ -40,13 +41,14 @@
 		/* Ajax download dumper */
 		var data_dumper = {
 			action: 'dbmngr_dumper',
+			dbmngr_ajax_nonce_field : db_manager_js_var.dbmngr_nonce
 		};
 		$( '#dbmngr_download_ajax_dumper' ).click( function() {
-			dbmngr_download_ajax_dumper( dumper );
+			dbmngr_download_ajax_dumper( db_manager_js_var.dumper );
 			return false;
 		} );
 		$( '#dbmngr_update_ajax_dumper' ).click( function() {
-			dbmngr_download_ajax_dumper( dumper_udate );
+			dbmngr_download_ajax_dumper( db_manager_js_var.dumper_udate );
 			return false;
 		} );
 		function dbmngr_download_ajax_dumper( dumper_message ) {
@@ -66,7 +68,7 @@
 						$( '#dbmngr_download_ajax_dumper' ).remove();
 					} else {
 						$( '.error' ).css( 'display', 'block' );
-						$( '.error p strong' ).text( dumper_error );
+						$( '.error p strong' ).text( db_manager_js_var.dumper_error );
 						$( '#dbmngr-submit-loader-dumper' ).fadeOut();
 						$( '#dbmngr_download_ajax_dumper' ).remove();
 					}

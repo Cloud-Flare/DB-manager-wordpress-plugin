@@ -3,8 +3,8 @@ Contributors: bestwebsoft
 Donate link: https://www.2checkout.com/checkout/purchase?sid=1430388&quantity=1&product_id=94
 Tags: ajax, control acess to systems, BD Manager, database, DB manager, DB manager plugin, DB meneger, DB manadger, DB menager, DB managar, delete, delete Dumper, delete phpMyadmin, download, download Dumper, download phpMyadmin, Dumper, htaccess, htpasswd, mysql, phpMyadmin, update, update Dumper, update link, update phpMyadmin
 Requires at least: 3.0.1
-Tested up to: 3.9.1
-Stable tag: 1.0.2
+Tested up to: 4.0
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 
 == Changelog ==
 
+= V1.0.3 - 19.09.2014 =
+* Update : We updated all functionality for wordpress 4.0.
+* Budfix : Security Exploit was fixed.
+
 = V1.0.2 - 20.06.2014 =
 * Bugfix : Problem with downloading PhpMyAdmin was fixed.
 * Bugfix : Problem with disk qouta warning was fixed.
@@ -106,6 +110,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 * NEW : Css-style was added.
 
 == Upgrade Notice ==
+
+= V1.0.3 =
+We updated all functionality for wordpress 4.0. Security Exploit was fixed.
 
 = V1.0.2 =
 Problem with downloading PhpMyAdmin was fixed. Problem with disk qouta warning was fixed. Problem with getting configurations from wp-config was fixed.

@@ -4,7 +4,7 @@ Plugin Name: DB manager
 Plugin URI: http://bestwebsoft.com/plugin/
 Description: The DB manager plugin allows you to download the latest version of PhpMyadmin and Dumper and manage your site.
 Author: BestWebSoft
-Version: 1.0.2
+Version: 1.0.3
 Author URI: http://bestwebsoft.com/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -112,7 +112,8 @@ if ( ! function_exists ( 'dbmngr_version_check' ) ) {
 	 	if ( version_compare( $wp_version, $require_wp, "<" ) ) {
 			if ( is_plugin_active( $plugin ) ) {
 				deactivate_plugins( $plugin );
-				wp_die( "<strong>" . $dbmngr_plugin_info['Name'] . " </strong> " . __( 'requires', 'dbmngr' ) . " <strong>WordPress " . $require_wp . "</strong> " . __( 'or higher, that is why it has been deactivated! Please upgrade WordPress and try again.', 'dbmngr' ) . "<br /><br />" . __( 'Back to the WordPress', 'dbmngr' ) . " <a href='" . get_admin_url( null, 'plugins.php' ) . "'>" . __( 'Plugins page', 'dbmngr' ) . "</a>." );
+				$admin_url = ( function_exists( 'get_admin_url' ) ) ? get_admin_url( null, 'plugins.php' ) : esc_url( '/wp-admin/plugins.php' );
+				wp_die( "<strong>" . $dbmngr_plugin_info['Name'] . " </strong> " . __( 'requires', 'dbmngr' ) . " <strong>WordPress " . $require_wp . "</strong> " . __( 'or higher, that is why it has been deactivated! Please upgrade WordPress and try again.', 'dbmngr' ) . "<br /><br />" . __( 'Back to the WordPress', 'dbmngr' ) . " <a href='" . $admin_url . "'>" . __( 'Plugins page', 'dbmngr' ) . "</a>." );
 			}
 		}
 	}
@@ -143,10 +144,8 @@ if ( ! function_exists( 'register_dbmngr_settings' ) ) {
 				add_option( 'dbmngr_options', $dbmngr_option_defaults, '', 'yes' );
 		}
 		/* Get options from the database */
-		if ( 1 == $wpmu )
-			$dbmngr_options = get_site_option( 'dbmngr_options' );
-		else
-			$dbmngr_options = get_option( 'dbmngr_options' );
+		$dbmngr_options = ( 1 == $wpmu ) ? get_site_option( 'dbmngr_options' ) : get_option( 'dbmngr_options' );
+
 		/* Array merge incase this version has added new options */
 		if ( ! isset( $dbmngr_options['plugin_option_version'] ) || $dbmngr_options['plugin_option_version'] != $dbmngr_plugin_info["Version"] ) {
 			$dbmngr_options = array_merge( $dbmngr_option_defaults, $dbmngr_options );
@@ -289,7 +288,7 @@ if ( ! function_exists( 'dbmngr_curl_download' ) ) {
 				/* close file */
 				fclose( $dbmngr_fp );
 			} else {
-				$dbmngr_error = __( 'Create file Error!' .' '. $dbmngr_file . '<br>', 'dbmngr' );
+				$dbmngr_error = __( 'Could not create file!' .' '. $dbmngr_file . '<br>', 'dbmngr' );
 			}
 		}
 	}
@@ -374,9 +373,9 @@ if ( ! function_exists( 'dbmngr_unzip_new_catalog' ) ) {
 			if ( $dbmngr_zip->extractTo( plugin_dir_path( __FILE__ ) . $dbmngr_output_name . '/' . $dbmngr_new_name_catalog ) )
 				$dbmngr_zip->close();
 			else
-				$dbmngr_error = __( 'Error: Extracting failed!', 'dbmngr' );
+				$dbmngr_error = __( 'Error: could not extract file.', 'dbmngr' );
 		} else {
-			$dbmngr_error = __( 'Error: Unpacking failed!', 'dbmngr' );
+			$dbmngr_error = __( 'Error: could not unpack file.', 'dbmngr' );
 		}
 		return $dbmngr_new_name_catalog;
 	}
@@ -506,7 +505,7 @@ if ( ! function_exists( 'dbmngr_file_access' ) ) {
 			fwrite( $dbmngr_file_handle, $dbmngr_content_string );
 			fclose( $dbmngr_file_handle );
 		} else {
-			$dbmngr_error = __( 'Enable not work! File is not writable!' .' '. $dbmngr_create_name . '<br>', 'dbmngr' );
+			$dbmngr_error = __( 'Enable function does not work! File is not writable.' .' '. $dbmngr_create_name . '<br>', 'dbmngr' );
 		}
 	}
 }
@@ -581,11 +580,11 @@ if ( ! function_exists( 'dbmngr_file_password' ) ) {
 				update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 			}
 		} elseif ( 'pma' == $key ) {
-				$dbmngr_phpmyadmin_option['user_password_phpmyadmin'] = $dbmngr_password;
-				update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
+			$dbmngr_phpmyadmin_option['user_password_phpmyadmin'] = $dbmngr_password;
+			update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 		} elseif ( 'dumper' == $key ) {
-				$dbmngr_phpmyadmin_option['user_password_dumper'] = $dbmngr_password;
-				update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
+			$dbmngr_phpmyadmin_option['user_password_dumper'] = $dbmngr_password;
+			update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 		}
 		/* Create the .htaccess file at the root directory */
 		$dbmngr_create_name = plugin_dir_path( __FILE__ ) . $dbmngr_path;
@@ -617,28 +616,28 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 	function dbmngr_controller() {
 		global $dbmngr_error;
 		$dbmngr_arr_message = array();
-		if ( isset( $_GET['action'] ) ) {
+		if ( isset( $_GET['action'] ) && check_admin_referer( 'dbmngr_nonce_name' ) ) {
 			if ( 'pma' == $_GET["action"] ) { /* If press button download */
 				if ( 'Error' == dbmngr_download_phpmyadmin( null ) )
-					$dbmngr_error = __( 'Loading file Error!', 'dbmngr' );
+					$dbmngr_error = __( 'File loading error.', 'dbmngr' );
 				else {
 					$dbmngr_phpmyadmin_option = get_option( 'dbmngr_options' );
 					$dbmngr_phpmyadmin_option['existence_phpmyadmin'] = '0';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 				}
 				if ( ! isset( $dbmngr_error ) ) {
-					$dbmngr_arr_message = array( 'submit_download_pma' => __( 'PhpMyadmin loaded successfully!', 'dbmngr' ) );
+					$dbmngr_arr_message = array( 'submit_download_pma' => __( 'PhpMyadmin was loaded successfully!', 'dbmngr' ) );
 				}
 			} elseif ( 'dumper' == $_GET["action"] ) {				
 				if ( 'Error' == dbmngr_download_dumper( null ) )
-					$dbmngr_error = __( 'Loading file Error!', 'dbmngr' );
+					$dbmngr_error = __( 'File loading error.', 'dbmngr' );
 				else {
 					$dbmngr_phpmyadmin_option = get_option( 'dbmngr_options' );
 					$dbmngr_phpmyadmin_option['existence_dumper'] = '0';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 				}
 				if ( ! isset( $dbmngr_error ) ) {
-					$dbmngr_arr_message = array( 'submit_download_dumper' => __( 'Dumper loaded successfully!', 'dbmngr' ) );
+					$dbmngr_arr_message = array( 'submit_download_dumper' => __( 'Dumper was loaded successfully!', 'dbmngr' ) );
 				}
 			} elseif ( 'delete-pma' == $_GET["action"] ) {
 				if ( file_exists( plugin_dir_path( __FILE__ ) . 'phpmyadmin' ) ) {
@@ -648,7 +647,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					$dbmngr_phpmyadmin_option['access_phpmyadmin'] = '1';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 					if ( ! isset( $dbmngr_error ) ) {
-						$dbmngr_arr_message = array( 'submit_delete_pma' => __( 'PhpMyadmin deleted successfully!', 'dbmngr' ) );
+						$dbmngr_arr_message = array( 'submit_delete_pma' => __( 'PhpMyadmin was deleted successfully!', 'dbmngr' ) );
 					}
 				}
 			} elseif ( 'delete-dumper' == $_GET["action"] ) { /* If press button delete */
@@ -659,7 +658,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					$dbmngr_phpmyadmin_option['access_dumper'] = '1';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 					if ( ! isset( $dbmngr_error ) ) {
-						$dbmngr_arr_message = array( 'submit_delete_dumper' => __( 'Dumper deleted successfully!', 'dbmngr' ) );
+						$dbmngr_arr_message = array( 'submit_delete_dumper' => __( 'Dumper was deleted successfully!', 'dbmngr' ) );
 					}
 				}
 			} elseif ( 'off-pma' == $_GET["action"] ) { /* Off phpmyadmin and dumper */
@@ -669,7 +668,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					$dbmngr_phpmyadmin_option['access_phpmyadmin'] = '0';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 					if ( ! isset( $dbmngr_error ) ) {
-						$dbmngr_arr_message = array( 'submit_off_pma' => __( 'PhpMyadmin disable!', 'dbmngr' ) );
+						$dbmngr_arr_message = array( 'submit_off_pma' => __( 'PhpMyadmin is disable!', 'dbmngr' ) );
 					}
 				}
 			} elseif ( 'off-dumper' == $_GET["action"] ) {
@@ -679,7 +678,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					$dbmngr_phpmyadmin_option['access_dumper'] = '0';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 					if ( ! isset( $dbmngr_error ) ) {
-						$dbmngr_arr_message = array( 'submit_off_dumper' => __( 'Dumper disable!', 'dbmngr' ) );
+						$dbmngr_arr_message = array( 'submit_off_dumper' => __( 'Dumper is disable!', 'dbmngr' ) );
 					}
 					
 				}
@@ -693,7 +692,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					$dbmngr_phpmyadmin_option['access_phpmyadmin'] = '1';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 					if ( ! isset( $dbmngr_error ) ) {
-						$dbmngr_arr_message = array( 'submit_on_pma' => __( 'PhpMyadmin enable!', 'dbmngr' ) );
+						$dbmngr_arr_message = array( 'submit_on_pma' => __( 'PhpMyadmin is enable!', 'dbmngr' ) );
 					}
 				}
 			} elseif ( 'on-dumper' == $_GET["action"] ) {
@@ -706,7 +705,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					$dbmngr_phpmyadmin_option['access_dumper'] = '1';
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 					if ( ! isset( $dbmngr_error ) ) {
-						$dbmngr_arr_message = array( 'submit_on_dumper' => __( 'Dumper enable!', 'dbmngr' ) );
+						$dbmngr_arr_message = array( 'submit_on_dumper' => __( 'Dumper is enable!', 'dbmngr' ) );
 					}
 				}
 			} elseif ( 'update-dumper' == $_GET["action"] ) { /* Update dumper */
@@ -725,7 +724,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 				}
 				if ( ! isset( $dbmngr_error ) ) {
-					$dbmngr_arr_message = array( 'submit_download_dumper' => __( 'Dumper update successfully!', 'dbmngr' ) );
+					$dbmngr_arr_message = array( 'submit_download_dumper' => __( 'Dumper was updated successfully!', 'dbmngr' ) );
 				}
 			} elseif ( 'update-phpmyadmin' == $_GET["action"] ) { /* Update phpmyadmin */
 
@@ -735,7 +734,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					dbmngr_remove_directory( plugin_dir_path( __FILE__ ) . 'phpmyadmin' );
 				} /* Download phpmyadmin */
 				if ( 'Error' == dbmngr_download_phpmyadmin( null ) )
-					$dbmngr_error = __( 'Loading file Error!', 'dbmngr' );
+					$dbmngr_error = __( 'File loading error.', 'dbmngr' );
 				else {
 					dbmngr_download_phpmyadmin( null );
 					$dbmngr_value_phpmyadmin = dbmngr_pma_last_version_parser( 'http://www.phpmyadmin.net/home_page/index.php' );
@@ -744,7 +743,7 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 					update_option( 'dbmngr_options', $dbmngr_phpmyadmin_option );
 				}
 				if ( ! isset( $dbmngr_error ) ) {
-					$dbmngr_arr_message = array( 'submit_download_dumper' => __( 'PhpMyadmin update successfully!', 'dbmngr' ) );
+					$dbmngr_arr_message = array( 'submit_download_dumper' => __( 'PhpMyadmin was updated successfully!', 'dbmngr' ) );
 				}
 			}
 		}
@@ -755,43 +754,31 @@ if ( ! function_exists( 'dbmngr_controller' ) ) {
 	}
 }
 
-/* Js localization */
-if ( ! function_exists( 'db_manager_js_var' ) ) {
-	function db_manager_js_var() { ?>
-		<script type="text/javascript">
-			var pma = '<?php _e( 'PhpMyadmin loaded successfully!' , 'dbmngr' ); ?>';
-			var dumper = '<?php _e( 'Dumper loaded successfully!' , 'dbmngr' ); ?>';
-			var pma_error = '<?php _e( 'PhpMyadmin loaded incorrect!' , 'dbmngr' ); ?>';
-			var dumper_error = '<?php _e( 'Dumper loaded incorrect!' , 'dbmngr' ); ?>';
-			var pma_update = '<?php _e( 'PhpMyadmin update successfully!' , 'dbmngr' ); ?>';
-			var dumper_udate = '<?php _e( 'Dumper update successfully!' , 'dbmngr' ); ?>';
-		</script>
-<?php }
-}
-
 /* Add style css and js */
 if ( ! function_exists ( 'dbmngr_admin_head' ) ) {
 	function dbmngr_admin_head() {
 		if ( isset( $_REQUEST['page'] ) && 'db-manager.php' == $_REQUEST['page'] ) {
 			wp_enqueue_style( 'dbmngr_stylesheet', plugins_url( 'css/style.css', __FILE__ ) );
-			wp_enqueue_script( 'dbmngr_script', plugins_url( '/js/script.js', __FILE__ ) );
 			wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'db_manager', db_manager_js_var() );
+			wp_enqueue_script( 'dbmngr_script', plugins_url( '/js/script.js', __FILE__ ) );			
+			wp_localize_script( 'dbmngr_script', 'db_manager_js_var', array(
+				'pma' 			=> __( 'PhpMyadmin loaded successfully!' , 'dbmngr' ),
+				'dumper' 		=> __( 'Dumper loaded successfully!' , 'dbmngr' ),
+				'pma_error'		=> __( 'PhpMyadmin loaded incorrect!' , 'dbmngr' ),
+				'dumper_error'	=> __( 'Dumper loaded incorrect!' , 'dbmngr' ),
+				'pma_update'	=> __( 'PhpMyadmin update successfully!' , 'dbmngr' ),
+				'dumper_udate'	=> __( 'Dumper update successfully!' , 'dbmngr' ),
+				'dbmngr_nonce' => wp_create_nonce( plugin_basename( __FILE__ ), 'dbmngr_ajax_nonce_field' ),
+			) );
 		}
-	}
-}
-
-/* Function for delete options */
-if ( ! function_exists ( 'dbmngr_delete_options' ) ) {
-	function dbmngr_delete_options() {
-		delete_option( 'dbmngr_options' );
-		delete_site_option( 'dbmngr_options' );
 	}
 }
 
 /* Ajax download dumper */
 if ( ! function_exists ( 'dbmngr_ajax_download_dumper' ) ) {
 	function dbmngr_ajax_download_dumper() {
+		check_ajax_referer( plugin_basename( __FILE__ ), 'dbmngr_ajax_nonce_field' );
+
 		if ( 'Error' == dbmngr_download_dumper( 'dumper' ) ) {
 			echo 'error';
 			die();
@@ -809,6 +796,8 @@ if ( ! function_exists ( 'dbmngr_ajax_download_dumper' ) ) {
 /* Ajax download phpmyadmin */
 if ( ! function_exists ( 'dbmngr_ajax_download_phpmyadmin' ) ) {
 	function dbmngr_ajax_download_phpmyadmin() {	
+		check_ajax_referer( plugin_basename( __FILE__ ), 'dbmngr_ajax_nonce_field' );
+
 		if ( 'Error' == dbmngr_download_phpmyadmin( 'pma' ) ) {
 			echo 'error';
 			die();
@@ -847,27 +836,25 @@ if ( ! function_exists ( 'dbmngr_show_dumper' ) ) {
 			$dbmngr_value_dumper = dbmngr_dumper_last_version_parser( 'http://sypex.net/ru/products/dumper/downloads/' );
 			$dbmngr_phpmyadmin_option = get_option( 'dbmngr_options' );
 			if ( isset( $dbmngr_option_array['version_dumper'] ) && $dbmngr_phpmyadmin_option['version_dumper'] != $dbmngr_value_dumper ) {
-				$dbmngr_link_update = "<p>" . __( 'There is a new version of Dumper available:', 'dbmngr' ) .' '. $dbmngr_value_dumper . ' <a href="admin.php?page=db-manager.php&action=update-dumper" id="dbmngr_update_ajax_dumper" >' . __( 'Update now', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-dumper" style="display: none;" /> </p>';
+				$dbmngr_link_update = "<p>" . __( 'There is a new version of Dumper available:', 'dbmngr' ) . ' ' . $dbmngr_value_dumper . ' <a href="admin.php?page=db-manager.php&action=update-dumper" id="dbmngr_update_ajax_dumper" >' . __( 'Update now', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-dumper" style="display: none;" /> </p>';
 			}
 		}
 
 		$dbmngr_option_array = get_option( 'dbmngr_options' );
 		if ( '1' == $dbmngr_option_array['existence_dumper'] ) { /* Show the controls elements - Download */
-			$dbmngr_link_download = ' <a href="admin.php?page=db-manager.php&action=dumper" id="dbmngr_download_ajax_dumper" >' . __( 'Download', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-dumper" style="display: none;" /> ';
-			
+			$dbmngr_link_download = ' <a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=dumper', 'dbmngr_nonce_name' ) . '" id="dbmngr_download_ajax_dumper">' . __( 'Download', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-dumper" style="display: none;" /> ';
 		} elseif ( '0' == $dbmngr_option_array['existence_dumper'] && file_exists( plugin_dir_path( __FILE__ ) . 'dumper' ) ) { /* Show the controls elements - Delete, Disable/Enable */
-			$dbmngr_link_delete = ' <a href="admin.php?page=db-manager.php&action=delete-dumper" >' . __( 'Delete', 'dbmngr' ) . '</a> ';
+			$dbmngr_link_delete = ' <a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=delete-dumper', 'dbmngr_nonce_name' ) . '" >' . __( 'Delete', 'dbmngr' ) . '</a> ';
 			if( '1' == $dbmngr_option_array['access_dumper'] ) {
-				$dbmngr_on_off = ' <a href="admin.php?page=db-manager.php&action=off-dumper">' . __( 'Disable access', 'dbmngr' ) . '</a> ';
+				$dbmngr_on_off = ' <a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=off-dumper', 'dbmngr_nonce_name' ) . '">' . __( 'Disable access', 'dbmngr' ) . '</a> ';
 			} else {
-				$dbmngr_on_off = ' <a href="admin.php?page=db-manager.php&action=on-dumper">' . __( 'Enable access', 'dbmngr' ) . '</a> ';
+				$dbmngr_on_off = ' <a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=on-dumper', 'dbmngr_nonce_name' ) . '">' . __( 'Enable access', 'dbmngr' ) . '</a> ';
 			}
 		} else { /* Show the controls elements - Download */
-			$dbmngr_link_download = ' <a href="admin.php?page=db-manager.php&action=dumper" id="dbmngr_download_ajax_dumper" >' . __( 'Download', 'dbmngr' ) . '</a><img src="'.admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-dumper" style="display: none;" /> ';
+			$dbmngr_link_download = ' <a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=dumper', 'dbmngr_nonce_name' ) . '" id="dbmngr_download_ajax_dumper" >' . __( 'Download', 'dbmngr' ) . '</a><img src="'.admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-dumper" style="display: none;" /> ';
 		}
 		return $dbmngr_link_dumper . $dbmngr_link_download . $dbmngr_on_off . $dbmngr_link_delete . $dbmngr_link_update;
-	}
-	
+	}	
 }
 /* Show phpmyadmin link */
 if ( ! function_exists ( 'dbmngr_show_phpmyadmin' ) ) {
@@ -908,16 +895,16 @@ if ( ! function_exists ( 'dbmngr_show_phpmyadmin' ) ) {
 		}
 		$dbmngr_option_array = get_option( 'dbmngr_options' );
 		if( '1' == $dbmngr_option_array['existence_phpmyadmin'] ) {
-			$dbmngr_link_download = '<a href="admin.php?page=db-manager.php&action=pma" id="dbmngr_download_ajax_pma" >' . __( 'Download', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-pma" style="display: none;" /> ';
+			$dbmngr_link_download = '<a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=pma', 'dbmngr_nonce_name' ) . '" id="dbmngr_download_ajax_pma" >' . __( 'Download', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-pma" style="display: none;" /> ';
 		} elseif ( '0' == $dbmngr_option_array['existence_phpmyadmin'] && file_exists( plugin_dir_path( __FILE__ ) . 'phpmyadmin' ) ) {
-			$dbmngr_link_delete = '<a href="admin.php?page=db-manager.php&action=delete-pma">' . __( 'Delete', 'dbmngr' ) . '</a> ';
+			$dbmngr_link_delete = '<a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=delete-pma', 'dbmngr_nonce_name' ) . '">' . __( 'Delete', 'dbmngr' ) . '</a> ';
 			if( '1' == $dbmngr_option_array['access_phpmyadmin'] ) {
-				$dbmngr_on_off = '<a href="admin.php?page=db-manager.php&action=off-pma">' . __( 'Disable access', 'dbmngr' ) . '</a> ';
+				$dbmngr_on_off = '<a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=off-pma', 'dbmngr_nonce_name' ) . '">' . __( 'Disable access', 'dbmngr' ) . '</a> ';
 			} else {
-				$dbmngr_on_off = '<a href="admin.php?page=db-manager.php&action=on-pma">' . __( 'Enable access', 'dbmngr' ) . '</a> ';
+				$dbmngr_on_off = '<a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=on-pma', 'dbmngr_nonce_name' ) . '">' . __( 'Enable access', 'dbmngr' ) . '</a> ';
 			}
 		} else {
-			$dbmngr_link_download = '<a href="admin.php?page=db-manager.php&action=pma" id="dbmngr_download_ajax_pma">' . __( 'Download', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-pma" style="display: none;" /> ';
+			$dbmngr_link_download = '<a href="' . wp_nonce_url( 'admin.php?page=db-manager.php&action=pma', 'dbmngr_nonce_name' ) . '" id="dbmngr_download_ajax_pma">' . __( 'Download', 'dbmngr' ) . '</a><img src="' . admin_url( '/images/wpspin_light.gif' ) . '"id="dbmngr-submit-loader-pma" style="display: none;" /> ';
 		}
 		return $dbmngr_link_phpmyadmin . $dbmngr_link_download . $dbmngr_on_off . $dbmngr_link_delete . $dbmngr_link_update;
 	}
@@ -932,7 +919,7 @@ if ( ! function_exists( 'dbmngr_settings_page' ) ) {
 
 		/* Check permission on plugin */
 		if ( ! is_writable( plugin_dir_path( __FILE__ ) ) ) {
-			$dbmngr_error = __( 'Folder with plugin is not writable please give permission!', 'dbmngr' );
+			$dbmngr_error = __( 'Not enough rights to write anything to folder with plugin. Please give permission.', 'dbmngr' );
 		}
 		/* Check cURL */
 		if ( ! function_exists( 'curl_init' ) ) {
@@ -974,12 +961,10 @@ if ( ! function_exists( 'dbmngr_settings_page' ) ) {
 			<form method="post" action="admin.php?page=db-manager.php">
 				<table class="form-table">
 					<tr valign="top">
-						<td colspan="2">
-							<?php _e( 'You can download PhpMyAdmin and Dumper from the official site!', 'dbmngr' ); ?>
-						</td>
+						<td colspan="2"><?php _e( 'You can download PhpMyAdmin and Dumper from the official site!', 'dbmngr' ); ?></td>
 					</tr>
 					<tr valign="top">
-					<th scope="row"><?php _e( 'PhpMyAdmin', 'dbmngr' ); ?> </th>
+					<th scope="row"><?php _e( 'PhpMyAdmin', 'dbmngr' ); ?></th>
 						<td class="dbmngr-phpmyadmin">
 							<?php /* Show the controls elements phpmyadmin */
 							if ( is_writable( plugin_dir_path( __FILE__ ) ) ) {
@@ -988,7 +973,7 @@ if ( ! function_exists( 'dbmngr_settings_page' ) ) {
 						</td>
 					</tr>
 					<tr valign="top">
-					<th scope="row"><?php _e( 'Dumper', 'dbmngr' ); ?> </th>
+					<th scope="row"><?php _e( 'Dumper', 'dbmngr' ); ?></th>
 						<td class="dbmngr-dumper">
 							<?php /* Show the controls elements dumper */
 							if ( is_writable( plugin_dir_path( __FILE__ ) ) ) {
@@ -1000,6 +985,14 @@ if ( ! function_exists( 'dbmngr_settings_page' ) ) {
 			</form>
 		</div>
 	<?php }
+}
+
+/* Function for delete options */
+if ( ! function_exists ( 'dbmngr_delete_options' ) ) {
+	function dbmngr_delete_options() {
+		delete_option( 'dbmngr_options' );
+		delete_site_option( 'dbmngr_options' );
+	}
 }
 
 add_action( 'admin_menu', 'dbmngr_add_admin_menu' );

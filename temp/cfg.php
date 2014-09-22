@@ -1,7 +1,6 @@
-<?php
-$CFG = array (
+<?php $CFG = array (
 	'charsets' => 'cp1251 utf8 latin1',
-	'lang' => 'ru',
+	'lang' => 'en',
 	'time_web' => '600',
 	'time_cron' => '600',
 	'backup_path' => 'backup/',
@@ -19,5 +18,4 @@ $CFG = array (
 	'pass' => '',
 	'confirm' => '6',
 	'exitURL' => './',
-);
-?>
+); ?>

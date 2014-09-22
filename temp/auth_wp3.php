@@ -1,7 +1,7 @@
 <?php
 /*$dbmngr_path = $_SERVER['DOCUMENT_ROOT'] . '/wp-config.php';*/
 $full_path = explode( '/', getcwd() );
-for ( $i=0; $i < count( $full_path ); $i++ ) {
+for ( $i = 0; $i < count( $full_path ); $i++ ) {
 	if ( 0 == $i ) {
 		$path = $full_path[$i] . '/';
 	} else {
@@ -12,7 +12,7 @@ for ( $i=0; $i < count( $full_path ); $i++ ) {
 }
 
 $dbmngr_config = array();
-foreach( $_COOKIE AS $c => $v ) {
+foreach ( $_COOKIE AS $c => $v ) {
 	if ( strpos( $c, 'wordpress_logged_in' ) !== false ) {
 		$dbmngr_config['COOKIE'] = explode( '|', $v );
 		break;
@@ -24,7 +24,7 @@ if ( isset( $dbmngr_config['COOKIE'] ) && count( $dbmngr_config['COOKIE'] ) == 3
 	if ( preg_match_all( "/define\('(\w+)',\s*'(.*?)'\);/m", $dbmngr_file, $m, PREG_SET_ORDER ) && preg_match( "/^\\\$table_prefix\s*=\s*'(.+?)';/m", $dbmngr_file, $t ) ) {
 		$dbmngr_config['TAB_PREFIX'] = stripcslashes( $t[1] );
 		foreach ( $m AS $c ) {
-			$dbmngr_config[$c[1]] = stripcslashes( $c[2] );
+			$dbmngr_config[ $c[1] ] = stripcslashes( $c[2] );
 		}
 		/* Check user */
 		if ( $this->connect( $dbmngr_config['DB_HOST'], '', $dbmngr_config['DB_USER'], $dbmngr_config['DB_PASSWORD'] ) ) {
