@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: DB manager
-Plugin URI: http://bestwebsoft.com/plugin/
+Plugin URI: http://bestwebsoft.com/products/
 Description: The DB manager plugin allows you to download the latest version of PhpMyadmin and Dumper and manage your site.
 Author: BestWebSoft
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://bestwebsoft.com/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -29,13 +29,13 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 if ( ! function_exists( 'dbmngr_add_admin_menu' ) ) {
 	function dbmngr_add_admin_menu() {
-		global $bstwbsftwppdtplgns_options, $wpmu, $bstwbsftwppdtplgns_added_menu;
+		global $bstwbsftwppdtplgns_options, $bstwbsftwppdtplgns_added_menu;
 		$bws_menu_info = get_plugin_data( plugin_dir_path( __FILE__ ) . "bws_menu/bws_menu.php" );
 		$bws_menu_version = $bws_menu_info["Version"];
 		$base = plugin_basename( __FILE__ );
 
 		if ( ! isset( $bstwbsftwppdtplgns_options ) ) {
-			if ( 1 == $wpmu ) {
+			if ( is_multisite() ) {
 				if ( ! get_site_option( 'bstwbsftwppdtplgns_options' ) )
 					add_site_option( 'bstwbsftwppdtplgns_options', array(), '', 'yes' );
 				$bstwbsftwppdtplgns_options = get_site_option( 'bstwbsftwppdtplgns_options' );
@@ -49,11 +49,17 @@ if ( ! function_exists( 'dbmngr_add_admin_menu' ) ) {
 		if ( isset( $bstwbsftwppdtplgns_options['bws_menu_version'] ) ) {
 			$bstwbsftwppdtplgns_options['bws_menu']['version'][ $base ] = $bws_menu_version;
 			unset( $bstwbsftwppdtplgns_options['bws_menu_version'] );
-			update_option( 'bstwbsftwppdtplgns_options', $bstwbsftwppdtplgns_options, '', 'yes' );
+			if ( is_multisite() )
+				update_site_option( 'bstwbsftwppdtplgns_options', $bstwbsftwppdtplgns_options, '', 'yes' );
+			else
+				update_option( 'bstwbsftwppdtplgns_options', $bstwbsftwppdtplgns_options, '', 'yes' );
 			require_once( dirname( __FILE__ ) . '/bws_menu/bws_menu.php' );
 		} else if ( ! isset( $bstwbsftwppdtplgns_options['bws_menu']['version'][ $base ] ) || $bstwbsftwppdtplgns_options['bws_menu']['version'][ $base ] < $bws_menu_version ) {
 			$bstwbsftwppdtplgns_options['bws_menu']['version'][ $base ] = $bws_menu_version;
-			update_option( 'bstwbsftwppdtplgns_options', $bstwbsftwppdtplgns_options, '', 'yes' );
+			if ( is_multisite() )
+				update_site_option( 'bstwbsftwppdtplgns_options', $bstwbsftwppdtplgns_options, '', 'yes' );
+			else
+				update_option( 'bstwbsftwppdtplgns_options', $bstwbsftwppdtplgns_options, '', 'yes' );
 			require_once( dirname( __FILE__ ) . '/bws_menu/bws_menu.php' );
 		} else if ( ! isset( $bstwbsftwppdtplgns_added_menu ) ) {
 			$plugin_with_newer_menu = $base;
@@ -67,8 +73,8 @@ if ( ! function_exists( 'dbmngr_add_admin_menu' ) ) {
 			if ( file_exists( ABSPATH . $wp_content_dir . '/plugins/' . $plugin_with_newer_menu[0] . '/bws_menu/bws_menu.php' ) )
 				require_once( ABSPATH . $wp_content_dir . '/plugins/' . $plugin_with_newer_menu[0] . '/bws_menu/bws_menu.php' );
 			else
-				require_once( dirname( __FILE__ ) . '/bws_menu/bws_menu.php' );
-			$bstwbsftwppdtplgns_added_menu = true;
+				require_once( dirname( __FILE__ ) . '/bws_menu/bws_menu.php' );	
+			$bstwbsftwppdtplgns_added_menu = true;			
 		}
 
 		add_menu_page( 'BWS Plugins', 'BWS Plugins', 'manage_options', 'bws_plugins', 'bws_add_menu_render', plugins_url( "images/px.png", __FILE__ ), 1001 );
@@ -82,6 +88,9 @@ if ( ! function_exists ( 'dbmngr_plugin_init' ) ) {
 	function dbmngr_plugin_init() {
 		/* Internationalization, first(!) */
 		load_plugin_textdomain( 'dbmngr', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
+		/* Check version on WordPress */
+		dbmngr_version_check();
 	}
 }
 
@@ -89,13 +98,11 @@ if ( ! function_exists ( 'dbmngr_plugin_admin_init' ) ) {
 	function dbmngr_plugin_admin_init() {
  		global $dbmngr_plugin_info, $bws_plugin_info;
 
- 		$dbmngr_plugin_info = get_plugin_data( __FILE__, false );
+ 		if ( ! $dbmngr_plugin_info )
+ 			$dbmngr_plugin_info = get_plugin_data( __FILE__, false );
 
 		if ( ! isset( $bws_plugin_info ) || empty( $bws_plugin_info ) )
 			$bws_plugin_info = array( 'id' => '131', 'version' => $dbmngr_plugin_info["Version"] );
-
-		/* Check version on WordPress */
-		dbmngr_version_check();
 
 		/* Call register settings function */
 		if ( isset( $_GET['page'] ) && "db-manager.php" == $_GET['page'] )
@@ -110,9 +117,12 @@ if ( ! function_exists ( 'dbmngr_version_check' ) ) {
 		$require_wp		=	"3.0.1"; /* Wordpress at least requires version */
 		$plugin			=	plugin_basename( __FILE__ );
 	 	if ( version_compare( $wp_version, $require_wp, "<" ) ) {
+	 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 			if ( is_plugin_active( $plugin ) ) {
 				deactivate_plugins( $plugin );
 				$admin_url = ( function_exists( 'get_admin_url' ) ) ? get_admin_url( null, 'plugins.php' ) : esc_url( '/wp-admin/plugins.php' );
+				if ( ! $dbmngr_plugin_info )
+					$dbmngr_plugin_info = get_plugin_data( __FILE__, false );
 				wp_die( "<strong>" . $dbmngr_plugin_info['Name'] . " </strong> " . __( 'requires', 'dbmngr' ) . " <strong>WordPress " . $require_wp . "</strong> " . __( 'or higher, that is why it has been deactivated! Please upgrade WordPress and try again.', 'dbmngr' ) . "<br /><br />" . __( 'Back to the WordPress', 'dbmngr' ) . " <a href='" . $admin_url . "'>" . __( 'Plugins page', 'dbmngr' ) . "</a>." );
 			}
 		}
@@ -122,7 +132,7 @@ if ( ! function_exists ( 'dbmngr_version_check' ) ) {
 /* Register settings function */
 if ( ! function_exists( 'register_dbmngr_settings' ) ) {
 	function register_dbmngr_settings() {
-		global $wpmu, $dbmngr_options, $dbmngr_plugin_info;
+		global $dbmngr_options, $dbmngr_plugin_info;
 
 		if ( ! $dbmngr_plugin_info )
 			$dbmngr_plugin_info = get_plugin_data( __FILE__ );
@@ -135,16 +145,10 @@ if ( ! function_exists( 'register_dbmngr_settings' ) ) {
 			'plugin_option_version' 			=> $dbmngr_plugin_info["Version"]
 		);
 		/* Install the option defaults */
-		if ( 1 == $wpmu ) {
-			if ( ! get_site_option( 'dbmngr_options' ) ) {
-				add_site_option( 'dbmngr_options', $dbmngr_option_defaults, '', 'yes' );
-			}
-		} else {
-			if ( ! get_option( 'dbmngr_options' ) )
-				add_option( 'dbmngr_options', $dbmngr_option_defaults, '', 'yes' );
-		}
+		if ( ! get_option( 'dbmngr_options' ) )
+			add_option( 'dbmngr_options', $dbmngr_option_defaults, '', 'yes' );
 		/* Get options from the database */
-		$dbmngr_options = ( 1 == $wpmu ) ? get_site_option( 'dbmngr_options' ) : get_option( 'dbmngr_options' );
+		$dbmngr_options = get_option( 'dbmngr_options' );
 
 		/* Array merge incase this version has added new options */
 		if ( ! isset( $dbmngr_options['plugin_option_version'] ) || $dbmngr_options['plugin_option_version'] != $dbmngr_plugin_info["Version"] ) {
@@ -175,7 +179,7 @@ if ( ! function_exists( 'dbmngr_register_plugin_links' ) ) {
 		$base = plugin_basename( __FILE__ );
 		if ( $file == $base ) {
 			$links[] = '<a href="admin.php?page=db-manager.php">' . __( 'Settings', 'dbmngr' ) . '</a>';
-			$links[] = '<a href="http://bestwebsoft.com/plugin/db-manager/#faq" target="_blank">' . __( 'FAQ', 'dbmngr' ) . '</a>';
+			$links[] = '<a href="http://bestwebsoft.com/products/db-manager/faq/" target="_blank">' . __( 'FAQ', 'dbmngr' ) . '</a>';
 			$links[] = '<a href="http://support.bestwebsoft.com">' . __( 'Support', 'dbmngr' ) . '</a>';
 		}
 		return $links;
@@ -951,7 +955,7 @@ if ( ! function_exists( 'dbmngr_settings_page' ) ) {
 			<h2><?php _e( 'DB manager settings', 'dbmngr' ); ?></h2>
 			<h2 class="nav-tab-wrapper">
 				<a class="nav-tab<?php if ( ! isset( $_GET['action'] ) ) echo ' nav-tab-active'; ?>" href="admin.php?page=db-manager.php"><?php _e( 'Settings', 'dbmngr' ); ?></a>
-				<a class="nav-tab" href="http://bestwebsoft.com/plugin/db-manager/#faq" target="_blank" ><?php _e( 'FAQ', 'dbmngr' ); ?></a>
+				<a class="nav-tab" href="http://bestwebsoft.com/products/db-manager/faq/" target="_blank" ><?php _e( 'FAQ', 'dbmngr' ); ?></a>
 			</h2>
 			<noscript>			
 				<div class="error"><p><strong><?php _e( 'Please enable JavaScript!', 'dbmngr' ); ?></strong></p></div>
@@ -991,7 +995,6 @@ if ( ! function_exists( 'dbmngr_settings_page' ) ) {
 if ( ! function_exists ( 'dbmngr_delete_options' ) ) {
 	function dbmngr_delete_options() {
 		delete_option( 'dbmngr_options' );
-		delete_site_option( 'dbmngr_options' );
 	}
 }
 
