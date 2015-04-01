@@ -1,10 +1,10 @@
-=== DB manager ===
+=== DB manager by BestWebSoft ===
 Contributors: bestwebsoft
 Donate link: https://www.2checkout.com/checkout/purchase?sid=1430388&quantity=1&product_id=94
 Tags: ajax, control acess to systems, BD Manager, database, DB manager, DB manager plugin, DB meneger, DB manadger, DB menager, DB managar, delete, delete Dumper, delete phpMyadmin, download, download Dumper, download phpMyadmin, Dumper, htaccess, htpasswd, mysql, phpMyadmin, update, update Dumper, update link, update phpMyadmin
 Requires at least: 3.0.1
-Tested up to: 4.1
-Stable tag: 1.0.4
+Tested up to: 4.1.1
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,6 +47,8 @@ We can fix some things for free for the users who provide translation of our plu
 1. Upload the `db-manager` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin using the 'Plugins' menu in your WordPress admin pane.
 3. You can adjust the necessary settings using your WordPress admin panel in "BWS Plugins" > "DB manager".
+
+<a href="https://docs.google.com/document/d/1mdj6buhgBpK7W1fTH6I6CZpR2KWpBbZMMUXDIU56r6g/edit" target="_blank">View a Step-by-step Instruction on DB manager Installation</a>.
 
 == Frequently Asked Questions ==
 
@@ -92,6 +94,10 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 
 == Changelog ==
 
+= V1.0.5 - 01.04.2015 =
+* Update : BWS plugins section is updated.
+* Update : We updated all functionality for wordpress 4.1.1.
+
 = V1.0.4 - 06.01.2015 =
 * Update : BWS plugins section is updated.
 
@@ -113,6 +119,9 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 * NEW : Css-style was added.
 
 == Upgrade Notice ==
+
+= V1.0.5 =
+BWS plugins section is updated. We updated all functionality for wordpress 4.1.1.
 
 = V1.0.4 =
 BWS plugins section is updated.
