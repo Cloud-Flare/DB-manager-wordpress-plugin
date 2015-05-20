@@ -96,7 +96,8 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 == Changelog ==
 
 = V1.0.6 - 20.05.2015 =
-* Budfix : исправили доступ к PhpMyAdmin и Dumper при нестандартном названии папки плагина.
+* Budfix: We fixed access to PhpMyAdmin and Dumper for HTTPS-sites.
+* Budfix : We fixed access to PhpMyAdmin and Dumper with a nonstandard title of the plugin folder.
 * Update : We updated all functionality for wordpress 4.2.2.
 
 = V1.0.5 - 01.04.2015 =
@@ -126,7 +127,7 @@ Please make sure that the problem hasn't been discussed yet on our forum (<a hre
 == Upgrade Notice ==
 
 = V1.0.6 =
-We updated all functionality for wordpress 4.2.2.
+We fixed access to PhpMyAdmin and Dumper for HTTPS-sites. We fixed access to PhpMyAdmin and Dumper with a nonstandard title of the plugin folder. We updated all functionality for wordpress 4.2.2.
 
 = V1.0.5 =
 BWS plugins section is updated. We updated all functionality for wordpress 4.1.1.
