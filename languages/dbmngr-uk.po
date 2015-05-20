@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: db-manager\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-05-20 14:28+0300\n"
+"PO-Revision-Date: 2015-05-20 14:28+0300\n"
+"Last-Translator: bestwebsoft.com <plugins@bestwebsoft.com>\n"
+"Language-Team: bestwebsoft.com <plugin@bestwebsoft.com>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: db-manager.php:33
+msgid "DB manager Settings"
+msgstr "Установки DB manager"
+
+#: db-manager.php:105
+#: db-manager.php:119
+#: db-manager.php:893
+msgid "Settings"
+msgstr "Установки"
+
+#: db-manager.php:120
+#: db-manager.php:894
+msgid "FAQ"
+msgstr "Часті питання"
+
+#: db-manager.php:121
+msgid "Support"
+msgstr "Тех. підтримка"
+
+#: db-manager.php:141
+msgid "Check your internet connection!"
+msgstr "Перевірте підключення до Інтернет!"
+
+#: db-manager.php:233
+msgid "Could not create file!"
+msgstr "Не вдалося створити файл!"
+
+#: db-manager.php:318
+msgid "Error: could not extract file."
+msgstr "Не вдалося витягти файл."
+
+#: db-manager.php:320
+msgid "Error: could not unpack file."
+msgstr "Не вдалося розпакувати файл."
+
+#: db-manager.php:423
+msgid "Disable function does not work! File is not writable!"
+msgstr "Функція відключення не працює! Файл недоступний для запису!"
+
+#: db-manager.php:436
+msgid "Impossible to open the file! "
+msgstr "Неможливо відкрити файл!"
+
+#: db-manager.php:450
+msgid "Enable function does not work! File is not writable."
+msgstr "Функція відключення не працює! Файл недоступний для запису."
+
+#: db-manager.php:540
+msgid "Impossible to open the file!"
+msgstr "Неможливо відкрити файл!"
+
+#: db-manager.php:564
+#: db-manager.php:575
+#: db-manager.php:679
+msgid "File loading error."
+msgstr "Помилака завантаження файлу."
+
+#: db-manager.php:571
+msgid "PhpMyadmin was loaded successfully!"
+msgstr "PhpMyAdmin успішно завантажено!"
+
+#: db-manager.php:582
+msgid "Dumper was loaded successfully!"
+msgstr "Dumper успішно завантажено!"
+
+#: db-manager.php:592
+msgid "PhpMyadmin was deleted successfully!"
+msgstr "PhpMyAdmin успішно видалений!"
+
+#: db-manager.php:603
+msgid "Dumper was deleted successfully!"
+msgstr "Dumper успішно видалений!"
+
+#: db-manager.php:613
+msgid "PhpMyadmin is disable!"
+msgstr "PhpMyAdmin відключено!"
+
+#: db-manager.php:623
+msgid "Dumper is disable!"
+msgstr "Dumper відключено!"
+
+#: db-manager.php:637
+msgid "PhpMyadmin is enable!"
+msgstr "PhpMyAdmin увімкнено!"
+
+#: db-manager.php:650
+msgid "Dumper is enable!"
+msgstr "Dumper увімкнено!"
+
+#: db-manager.php:661
+msgid "Update file Error!"
+msgstr "Помилка при оновленні файлу!"
+
+#: db-manager.php:669
+msgid "Dumper was updated successfully!"
+msgstr "Dumper успішно оновлено!"
+
+#: db-manager.php:688
+msgid "PhpMyadmin was updated successfully!"
+msgstr "PhpMyAdmin успішно оновлено! "
+
+#: db-manager.php:707
+msgid "PhpMyadmin loaded successfully!"
+msgstr "PhpMyAdmin успішно завантажено!"
+
+#: db-manager.php:708
+msgid "Dumper loaded successfully!"
+msgstr "Dumper успішно завантажено!"
+
+#: db-manager.php:709
+msgid "PhpMyadmin loaded incorrect!"
+msgstr "PhpMyAdmin завантажено невірно!"
+
+#: db-manager.php:710
+msgid "Dumper loaded incorrect!"
+msgstr "Dumper завантажено невірно!"
+
+#: db-manager.php:711
+msgid "PhpMyadmin update successfully!"
+msgstr "PhpMyAdmin успішно оновлено! "
+
+#: db-manager.php:712
+msgid "Dumper update successfully!"
+msgstr "Dumper успішно оновлено!"
+
+#: db-manager.php:768
+#: db-manager.php:821
+#, php-format
+msgid "Please use username: <b>%s</b> and password: <b>%s</b> for login to system!"
+msgstr "Будь ласка, використовуйте логін: <b>%s</ b> та пароль: <b>%s </ b> для входу до системи!"
+
+#: db-manager.php:769
+#: db-manager.php:772
+#: db-manager.php:822
+#: db-manager.php:825
+msgid "Access"
+msgstr "Доступ"
+
+#: db-manager.php:780
+msgid "There is a new version of Dumper available:"
+msgstr "Доступна нова версія Dumper:"
+
+#: db-manager.php:780
+#: db-manager.php:833
+msgid "Update now"
+msgstr "Оновити"
+
+#: db-manager.php:786
+#: db-manager.php:795
+#: db-manager.php:838
+#: db-manager.php:847
+msgid "Download"
+msgstr "Завантажити"
+
+#: db-manager.php:788
+#: db-manager.php:840
+msgid "Delete"
+msgstr "Видалити"
+
+#: db-manager.php:790
+#: db-manager.php:842
+msgid "Disable access"
+msgstr "Відключити доступ"
+
+#: db-manager.php:792
+#: db-manager.php:844
+msgid "Enable access"
+msgstr "Включити доступ"
+
+#: db-manager.php:833
+msgid "There is a new version of PhpMyAdmin available:"
+msgstr "Доступна нова версія PhpMyAdmin:"
+
+#: db-manager.php:862
+msgid "Not enough rights to write anything to folder with plugin. Please give permission."
+msgstr "Папка з плагіном недоступна для запису. Будь ласка, надайте права."
+
+#: db-manager.php:866
+msgid "Curl support is disabled, contact the administrator of your server!"
+msgstr "Підтримка Curl вимкнена, зверніться до адміністратора вашого серверу!"
+
+#: db-manager.php:891
+msgid "settings"
+msgstr "Установки"
+
+#: db-manager.php:897
+msgid "Please enable JavaScript!"
+msgstr "Будь ласка, увімкніть JavaScript!"
+
+#: db-manager.php:904
+msgid "You can download PhpMyAdmin and Dumper from the official site!"
+msgstr "Ви можете завантажити PhpMyAdmin та Dumper з офіційного сайту!"
+
+#: db-manager.php:907
+msgid "PhpMyAdmin"
+msgstr "PhpMyAdmin"
+
+#: db-manager.php:916
+msgid "Dumper"
+msgstr "Dumper"
+
+#~ msgid "DB manager"
+#~ msgstr "DB manager"
+
+#~ msgid "DB manager settings"
+#~ msgstr "Налаштування DB manager"
+
+#~ msgid "requires"
+#~ msgstr "портебує"
+
+#~ msgid ""
+#~ "or higher, that is why it has been deactivated! Please upgrade WordPress "
+#~ "and try again."
+#~ msgstr ""
+#~ "чи вище, тому він був деактивований! Будь ласка, оновіть WordPress та "
+#~ "спробуйте ще раз."
+
+#~ msgid "Back to the WordPress"
+#~ msgstr "Повернутися до WordPress на"
+
+#~ msgid "Plugins page"
+#~ msgstr "Сторінку плагінів"
